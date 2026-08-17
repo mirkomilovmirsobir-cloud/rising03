@@ -353,10 +353,6 @@ function pageHome() {
         '<h2 class="carousel__title">Есть на складе</h2>' +
         '<div class="carousel__actions">' +
           '<a class="carousel__all" href="#/catalog">Смотреть все<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>' +
-          '<div class="carousel__arrows">' +
-            '<button type="button" class="carousel__arrow" data-carousel-prev aria-label="Предыдущие товары"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
-            '<button type="button" class="carousel__arrow" data-carousel-next aria-label="Следующие товары"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>' +
-          '</div>' +
         '</div>' +
       '</div>' +
       '<div class="carousel__viewport" data-carousel-viewport>' +

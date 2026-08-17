@@ -4,11 +4,11 @@
 (function () {
   "use strict";
 
+  var AUTOPLAY_DELAY = 4000;
+
   function initCarousel(root) {
     var viewport = root.querySelector("[data-carousel-viewport]");
     var track = root.querySelector("[data-carousel-track]");
-    var prevBtn = root.querySelector("[data-carousel-prev]");
-    var nextBtn = root.querySelector("[data-carousel-next]");
     var dotsWrap = root.querySelector("[data-carousel-dots]");
     if (!viewport || !track) return;
 
@@ -16,6 +16,7 @@
     if (!items.length) return;
 
     var dots = [];
+    var autoplayTimer = null;
 
     function step() {
       // Ширина одной карточки + отступ между карточками — на столько скроллим за клик.
@@ -62,10 +63,6 @@
     }
 
     function updateUI() {
-      var maxScroll = track.scrollWidth - viewport.clientWidth - 1;
-      if (prevBtn) prevBtn.disabled = viewport.scrollLeft <= 0;
-      if (nextBtn) nextBtn.disabled = viewport.scrollLeft >= maxScroll;
-
       if (dots.length) {
         var page = currentPage();
         dots.forEach(function (dot, index) {
@@ -74,16 +71,41 @@
       }
     }
 
-    if (prevBtn) {
-      prevBtn.addEventListener("click", function () {
-        viewport.scrollBy({ left: -step() * perView(), behavior: "smooth" });
-      });
+    // Карусель прокручивается по-настоящему (в один слайд) только на
+    // телефонной раскладке — на десктопе/планшете это статичная сетка.
+    function isScrollable() {
+      var style = getComputedStyle(viewport);
+      return style.overflowX === "auto" || style.overflowX === "scroll";
     }
-    if (nextBtn) {
-      nextBtn.addEventListener("click", function () {
+
+    function goToNext() {
+      var maxScroll = track.scrollWidth - viewport.clientWidth - 1;
+      if (viewport.scrollLeft >= maxScroll) {
+        viewport.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
         viewport.scrollBy({ left: step() * perView(), behavior: "smooth" });
-      });
+      }
     }
+
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      if (!isScrollable() || pageCount() <= 1) return;
+      autoplayTimer = setInterval(goToNext, AUTOPLAY_DELAY);
+    }
+
+    viewport.addEventListener("mouseenter", stopAutoplay);
+    viewport.addEventListener("mouseleave", startAutoplay);
+    viewport.addEventListener("touchstart", stopAutoplay, { passive: true });
+    viewport.addEventListener("touchend", function () {
+      setTimeout(startAutoplay, 2500);
+    });
 
     var scrollRaf = null;
     viewport.addEventListener("scroll", function () {
@@ -99,10 +121,12 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
         buildDots();
+        startAutoplay();
       }, 150);
     });
 
     buildDots();
+    startAutoplay();
   }
 
   function init() {
