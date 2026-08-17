@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://rising03.vercel.app/sitemap.xml
